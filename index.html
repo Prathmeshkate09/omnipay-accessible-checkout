@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OmniPay: Accessible, Section 508 & WCAG 2.1 AA Compliant Digital Payment Checkout System">
+  <title>OmniPay | Accessible Payment Portal</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Accessible Skip Navigation Link -->
+  <a href="#payment-form" class="skip-link">Skip to payment form</a>
+
+  <header class="app-header" role="banner">
+    <div class="header-container">
+      <div class="brand">
+        <svg class="brand-icon" aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+        <span class="brand-title">OmniPay</span>
+        <span class="badge badge-wcag" title="Compliant with Web Content Accessibility Guidelines 2.1 AA">WCAG 2.1 AA</span>
+      </div>
+
+      <!-- Accessibility Customization Controls -->
+      <div class="a11y-controls" aria-label="Accessibility preferences">
+        <button type="button" id="toggle-contrast" class="btn-toggle" aria-pressed="false" title="Switch between default and high-contrast color scheme">
+          <span class="btn-icon" aria-hidden="true">◐</span>
+          <span>High Contrast</span>
+        </button>
+        <button type="button" id="toggle-font" class="btn-toggle" aria-pressed="false" title="Toggle large reading font size">
+          <span class="btn-icon" aria-hidden="true">A+</span>
+          <span>Large Text</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Announcer Region for Screen Readers -->
+  <div id="sr-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <main id="main-content" class="main-layout" role="main">
+    <div class="checkout-grid">
+      
+      <!-- Order Summary Component -->
+      <section class="order-summary-card" aria-labelledby="summary-heading">
+        <h2 id="summary-heading" class="section-title">Order Summary</h2>
+        <div class="order-items-list" role="list">
+          <div class="order-item" role="listitem">
+            <div>
+              <p class="item-name">Developer Subscription (Annual)</p>
+              <p class="item-desc">Visa Developer Platform Access & SDK Tools</p>
+            </div>
+            <span class="item-price" aria-label="One hundred and twenty dollars">$120.00</span>
+          </div>
+          <div class="order-item" role="listitem">
+            <div>
+              <p class="item-name">Network Security & Tokenization Fee</p>
+              <p class="item-desc">End-to-End Cryptographic Tokenization</p>
+            </div>
+            <span class="item-price" aria-label="Zero dollars">Included</span>
+          </div>
+        </div>
+
+        <div class="summary-divider" role="separator" aria-hidden="true"></div>
+
+        <div class="summary-total">
+          <span class="total-label">Total Amount Due</span>
+          <span class="total-amount" id="order-total" aria-label="Total amount: one hundred and twenty dollars USD">$120.00</span>
+        </div>
+
+        <div class="security-guarantee">
+          <svg class="lock-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>256-bit Encrypted & Tokenized Transaction</span>
+        </div>
+      </section>
+
+      <!-- Accessible Payment Form -->
+      <section class="payment-form-card" aria-labelledby="form-heading">
+        <h1 id="form-heading" class="section-title">Payment Details</h1>
+        <p class="form-instructions">
+          All mandatory fields are marked with an asterisk (<span aria-hidden="true">*</span>). Payment details are validated in real-time.
+        </p>
+
+        <!-- Network / Offline / Error Banner -->
+        <div id="form-banner" class="alert-banner hidden" role="alert" aria-live="assertive"></div>
+
+        <form id="payment-form" novalidate autocomplete="on">
+
+          <!-- Cardholder Name -->
+          <div class="form-group">
+            <label for="cc-name" class="form-label">
+              Cardholder Name <span class="required" aria-hidden="true">*</span>
+            </label>
+            <span id="name-hint" class="input-hint">Enter your name exactly as displayed on the card</span>
+            <input
+              type="text"
+              id="cc-name"
+              name="cc-name"
+              class="form-input"
+              autocomplete="cc-name"
+              autocapitalize="characters"
+              spellcheck="false"
+              required
+              aria-required="true"
+              aria-describedby="name-hint name-error"
+              placeholder="e.g. PRATHAMESH KATE"
+            >
+            <span id="name-error" class="error-msg" aria-live="polite"></span>
+          </div>
+
+          <!-- Card Number with Card Brand Detection -->
+          <div class="form-group">
+            <div class="label-with-brand">
+              <label for="cc-number" class="form-label">
+                Card Number <span class="required" aria-hidden="true">*</span>
+              </label>
+              <!-- Dynamic Card Brand Indicator -->
+              <div id="card-brand-display" class="brand-indicator" aria-label="Detected card type: None">
+                <span id="brand-badge" class="brand-badge brand-unknown">Card</span>
+              </div>
+            </div>
+            <span id="num-hint" class="input-hint">13 to 19 digits. Spaces are added automatically.</span>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="cc-number"
+                name="cc-number"
+                class="form-input"
+                autocomplete="cc-number"
+                inputmode="numeric"
+                maxlength="23"
+                required
+                aria-required="true"
+                aria-describedby="num-hint num-error"
+                placeholder="4000 1234 5678 9010"
+              >
+              <div class="validity-indicator" aria-hidden="true" id="card-validity-icon"></div>
+            </div>
+            <span id="num-error" class="error-msg" aria-live="polite"></span>
+          </div>
+
+          <!-- Expiry Date & Security Code Grid -->
+          <div class="form-row">
+            <!-- Expiry Date (Hint Placed Above Input per Modern Web Guidance) -->
+            <div class="form-group col-half">
+              <label for="cc-exp" class="form-label">
+                Expiry Date <span class="required" aria-hidden="true">*</span>
+              </label>
+              <span id="exp-hint" class="input-hint">Format: MM/YY</span>
+              <input
+                type="text"
+                id="cc-exp"
+                name="cc-exp"
+                class="form-input"
+                autocomplete="cc-exp"
+                inputmode="numeric"
+                maxlength="5"
+                required
+                aria-required="true"
+                aria-describedby="exp-hint exp-error"
+                placeholder="MM/YY"
+              >
+              <span id="exp-error" class="error-msg" aria-live="polite"></span>
+            </div>
+
+            <!-- Security Code (CVV/CSC) -->
+            <div class="form-group col-half">
+              <label for="cc-csc" class="form-label">
+                Security Code (CVV) <span class="required" aria-hidden="true">*</span>
+              </label>
+              <span id="csc-hint" class="input-hint">3 or 4 digits on back</span>
+              <input
+                type="text"
+                id="cc-csc"
+                name="cc-csc"
+                class="form-input"
+                autocomplete="cc-csc"
+                inputmode="numeric"
+                maxlength="4"
+                required
+                aria-required="true"
+                aria-describedby="csc-hint csc-error"
+                placeholder="123"
+              >
+              <span id="csc-error" class="error-msg" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <!-- Billing Checkbox -->
+          <div class="form-group checkbox-group">
+            <input
+              type="checkbox"
+              id="billing-same"
+              name="billing-same"
+              class="form-checkbox"
+              checked
+            >
+            <label for="billing-same" class="checkbox-label">
+              Billing address matches shipping address
+            </label>
+          </div>
+
+          <!-- Submit Button with Explicit, Descriptive Text -->
+          <div class="form-actions">
+            <button
+              type="submit"
+              id="submit-payment"
+              class="btn-primary"
+              aria-label="Pay $120.00 USD securely"
+            >
+              <span class="btn-spinner hidden" aria-hidden="true"></span>
+              <span class="btn-text">Pay $120.00 USD</span>
+            </button>
+          </div>
+
+          <p class="privacy-note">
+            Payments are securely tokenized with unique client idempotency keys to prevent accidental duplicate charges.
+          </p>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Accessible Modal Dialog for Payment Confirmation -->
+  <dialog id="confirmation-dialog" class="receipt-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-desc">
+    <div class="dialog-content" role="document">
+      <div class="dialog-header">
+        <div class="success-icon" aria-hidden="true">✓</div>
+        <h2 id="dialog-title" class="dialog-title">Payment Successful!</h2>
+        <p id="dialog-desc" class="dialog-subtitle">Your transaction has been securely authorized and recorded.</p>
+      </div>
+
+      <div class="receipt-card">
+        <div class="receipt-row">
+          <span class="receipt-key">Transaction ID:</span>
+          <span class="receipt-val" id="receipt-txid">--</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-key">Network Authorization:</span>
+          <span class="receipt-val" id="receipt-auth">--</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-key">Payment Method:</span>
+          <span class="receipt-val" id="receipt-card">--</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-key">Amount Settled:</span>
+          <span class="receipt-val">$120.00 USD</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-key">Idempotency Key:</span>
+          <span class="receipt-val receipt-mono" id="receipt-idempotency">--</span>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" id="close-dialog-btn" class="btn-primary">
+          Done & Close Receipt
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Live Usability & A11y Audit Floating Panel -->
+  <aside class="usability-panel" aria-label="Usability metrics and accessibility monitor">
+    <div class="panel-header">
+      <span class="panel-badge">A11y & Usability Monitor</span>
+      <span id="audit-score" class="score-badge">WCAG: Pass</span>
+    </div>
+    <div class="panel-stats">
+      <div class="stat-item">
+        <span class="stat-num" id="stat-keystrokes">0</span>
+        <span class="stat-label">Keystrokes</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="stat-errors">0</span>
+        <span class="stat-label">Errors</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="stat-latency">--</span>
+        <span class="stat-label">Auth Latency</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Scripts -->
+  <script src="js/luhn.js"></script>
+  <script src="js/payment-engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
